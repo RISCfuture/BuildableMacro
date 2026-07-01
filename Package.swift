@@ -4,6 +4,11 @@
 import PackageDescription
 import CompilerPluginSupport
 
+let approachableConcurrency: [SwiftSetting] = [
+    .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+    .enableUpcomingFeature("InferIsolatedConformances")
+]
+
 let package = Package(
     name: "BuildableMacro",
     platforms: [
@@ -31,7 +36,8 @@ let package = Package(
             dependencies: [
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
-            ]
+            ],
+            swiftSettings: approachableConcurrency
         ),
 
         // Library that exposes a macro as part of its API, which is used in client programs.
@@ -40,7 +46,8 @@ let package = Package(
             dependencies: ["BuildableMacros"],
             resources: [
                 .process("../PrivacyInfo.xcprivacy"),
-            ]
+            ],
+            swiftSettings: approachableConcurrency
         ),
 
         // A client of the library, which is able to use the macro in its own code.
@@ -49,7 +56,8 @@ let package = Package(
             dependencies: ["BuildableMacro"],
             resources: [
                 .process("../PrivacyInfo.xcprivacy"),
-            ]
+            ],
+            swiftSettings: approachableConcurrency
         ),
 
         // A test target used to develop the macro implementation.
@@ -58,7 +66,9 @@ let package = Package(
             dependencies: [
                 "BuildableMacros",
                 .product(name: "MacroTesting", package: "swift-macro-testing"),
-            ]
+            ],
+            swiftSettings: approachableConcurrency
         ),
-    ]
+    ],
+    swiftLanguageModes: [.v5, .v6]
 )
